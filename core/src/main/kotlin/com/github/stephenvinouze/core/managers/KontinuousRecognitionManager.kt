@@ -47,7 +47,7 @@ class KontinuousRecognitionManager(
     }
 
     fun destroyRecognizer() {
-        muteRecognition(false)
+        muteRecognition(this.shouldMute)
         speech.destroy()
     }
 
