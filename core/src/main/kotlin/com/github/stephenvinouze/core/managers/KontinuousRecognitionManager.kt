@@ -46,8 +46,8 @@ class KontinuousRecognitionManager(
         }
     }
 
-    fun destroyRecognizer() {
-        muteRecognition(this.shouldMute)
+    fun destroyRecognizer(mute: Boolean) {
+        muteRecognition(mute|| false)
         speech.destroy()
     }
 
@@ -113,7 +113,7 @@ class KontinuousRecognitionManager(
         when (errorCode) {
             SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> cancelRecognition()
             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> {
-                destroyRecognizer()
+                destroyRecognizer(this.shouldMute)
                 createRecognizer()
             }
         }

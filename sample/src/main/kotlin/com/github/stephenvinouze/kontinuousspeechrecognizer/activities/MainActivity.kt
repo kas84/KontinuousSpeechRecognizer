@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), RecognitionCallback {
     }
 
     private val recognitionManager: KontinuousRecognitionManager by lazy {
-        KontinuousRecognitionManager(this, activationKeyword = ACTIVATION_KEYWORD, callback = this)
+        KontinuousRecognitionManager(this, activationKeyword = ACTIVATION_KEYWORD, shouldMute = true, callback = this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
