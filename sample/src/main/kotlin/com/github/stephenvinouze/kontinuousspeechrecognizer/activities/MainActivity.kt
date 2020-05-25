@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), RecognitionCallback {
     }
 
     override fun onDestroy() {
-        recognitionManager.destroyRecognizer()
+        recognitionManager.destroyRecognizer(false)
         super.onDestroy()
     }
 
@@ -137,6 +137,8 @@ class MainActivity : AppCompatActivity(), RecognitionCallback {
     override fun onKeywordDetected() {
         Log.i("Recognition","keyword detected !!!")
         textView.text = "Keyword detected"
+		recognitionManager.destroyRecognizer(false);
+		recognitionManager.createRecognizer()
     }
 
     override fun onPartialResults(results: List<String>) {}

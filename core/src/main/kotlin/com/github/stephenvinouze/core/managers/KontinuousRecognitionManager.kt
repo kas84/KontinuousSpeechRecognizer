@@ -1,13 +1,16 @@
 package com.github.stephenvinouze.core.managers
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import com.github.stephenvinouze.core.interfaces.RecognitionCallback
 import com.github.stephenvinouze.core.models.RecognitionStatus
@@ -20,6 +23,7 @@ class KontinuousRecognitionManager(
         private val activationKeyword: String,
         private val shouldMute: Boolean = false,
         private val callback: RecognitionCallback? = null
+
 ) : RecognitionListener {
 
     private var isActivated: Boolean = false
@@ -27,6 +31,7 @@ class KontinuousRecognitionManager(
     private val audioManager: AudioManager? = context.getSystemService()
 
     private val recognizerIntent by lazy {
+
         Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH)
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
@@ -63,24 +68,27 @@ class KontinuousRecognitionManager(
         speech.cancel()
     }
 
-    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+	@Suppress("DEPRECATION")
     private fun muteRecognition(mute: Boolean) {
-        audioManager?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val flag = if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
-                it.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, flag, 0)
-                it.adjustStreamVolume(AudioManager.STREAM_ALARM, flag, 0)
-                it.adjustStreamVolume(AudioManager.STREAM_MUSIC, flag, 0)
-                it.adjustStreamVolume(AudioManager.STREAM_RING, flag, 0)
-                it.adjustStreamVolume(AudioManager.STREAM_SYSTEM, flag, 0)
-            } else {
-                it.setStreamMute(AudioManager.STREAM_NOTIFICATION, mute)
-                it.setStreamMute(AudioManager.STREAM_ALARM, mute)
-                it.setStreamMute(AudioManager.STREAM_MUSIC, mute)
-                it.setStreamMute(AudioManager.STREAM_RING, mute)
-                it.setStreamMute(AudioManager.STREAM_SYSTEM, mute)
-            }
-        }
+		if (Settings.Global.getInt(context.contentResolver, "zen_mode" ) == 0){
+			audioManager?.let {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					val flag = if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
+					it.adjustStreamVolume(AudioManager.STREAM_NOTIFICATION, flag, 0)
+					it.adjustStreamVolume(AudioManager.STREAM_ALARM, flag, 0)
+					it.adjustStreamVolume(AudioManager.STREAM_MUSIC, flag, 0)
+					it.adjustStreamVolume(AudioManager.STREAM_RING, flag, 0)
+					it.adjustStreamVolume(AudioManager.STREAM_SYSTEM, flag, 0)
+				} else {
+					it.setStreamMute(AudioManager.STREAM_NOTIFICATION, mute)
+					it.setStreamMute(AudioManager.STREAM_ALARM, mute)
+					it.setStreamMute(AudioManager.STREAM_MUSIC, mute)
+					it.setStreamMute(AudioManager.STREAM_RING, mute)
+					it.setStreamMute(AudioManager.STREAM_SYSTEM, mute)
+				}
+			}
+		}
     }
 
     override fun onBeginningOfSpeech() {
