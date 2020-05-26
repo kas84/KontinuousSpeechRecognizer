@@ -124,6 +124,18 @@ class KontinuousRecognitionManager(
                 destroyRecognizer(this.shouldMute)
                 createRecognizer()
             }
+			SpeechRecognizer.ERROR_AUDIO -> {
+				destroyRecognizer(this.shouldMute)
+				createRecognizer()
+			}
+			SpeechRecognizer.ERROR_CLIENT -> {
+				destroyRecognizer(this.shouldMute)
+				createRecognizer()
+			}
+			SpeechRecognizer.ERROR_NETWORK -> {
+				destroyRecognizer(this.shouldMute)
+				createRecognizer()
+			}
         }
 
         startRecognition()
@@ -151,7 +163,7 @@ class KontinuousRecognitionManager(
             } else {
                 matches.firstOrNull { it.contains(other = activationKeyword, ignoreCase = true) }
                         ?.let {
-                            isActivated = true
+                            //isActivated = true
                             callback?.onKeywordDetected()
                         }
                 startRecognition()
